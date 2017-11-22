@@ -1,0 +1,30 @@
+#game {
+  border: black solid 1px;
+  margin: 50px;
+  display: inline-block;
+}
+
+.cell {
+  height:20px;
+  width:20px;
+  border: black solid 1px;
+}
+
+.cell.snake {
+  background:green
+}
+
+.cell.snake-head {
+  background:black
+}
+
+.cell.apple {
+  background: red
+}
+
+.row {
+  display: flex;
+}
+.row > div {
+  display: inline-block;
+}
