@@ -128,6 +128,10 @@ function Grid () {
   this.addApple();
 }
 
+Grid.prototype.isWon = function () {
+  return this.snake.pos.length === this.width * this.height;
+};
+
 Grid.prototype.addApple = function () {
   var possibleCoords = [];
   for (var i = 0; i < this.width; i++) {
@@ -137,6 +141,11 @@ Grid.prototype.addApple = function () {
       }
     }
   }
+
+  if (possibleCoords.length === 0) {
+    return;
+  }
+
   var appleCoord = possibleCoords[Math.floor(Math.random() * possibleCoords.length)];
   this.apple = new Apple(appleCoord);
 };
@@ -229,6 +238,10 @@ var movement = setInterval(function () {
   }
   if (snake.checkValid()) {
     grid.draw();
+    if (grid.isWon()) {
+      clearInterval(movement);
+      $('#gameover').append('U win!');
+    }
   } else {
     clearInterval(movement);
     $('#gameover').append('Gameover!');

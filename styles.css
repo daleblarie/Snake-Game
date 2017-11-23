@@ -14,12 +14,12 @@
   background:green
 }
 
-.cell.snake-head {
-  background:black
-}
-
 .cell.apple {
   background: red
+}
+
+.cell.snake-head {
+  background:black
 }
 
 .row {
