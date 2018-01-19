@@ -16,6 +16,9 @@ function getcell (row, col) {
   var $cell = $($cells[col]);
   return $cell;
 }
+const $gameover = $('#gameover');
+const $instructions = $('#instructions');
+$instructions.html('Use Arrow Keys to Move. Use R key to reset');
 
 // Snake
 // //////////////////////////////////////////////
@@ -26,7 +29,7 @@ function getcell (row, col) {
 // 1. creates a new object {}
 // 2. run the innards of you constructor function with that new object set to "this"
 // 3. return "this" aka that object you just created
-function Snake () {
+function Snake() {
   // sets 'this' to a new object
   // var this = {};
   this.pos = [
@@ -50,8 +53,8 @@ Snake.prototype.draw = function () {
 };
 Snake.prototype.checkValid = function () {
   var valid = true;
-  valid = valid && this.pos[0][0] >= 0 && this.pos[0][0] < 5;
-  valid = valid && this.pos[0][1] >= 0 && this.pos[0][1] < 5;
+  valid = valid && this.pos[0][0] >= 0 && this.pos[0][0] < 10;
+  valid = valid && this.pos[0][1] >= 0 && this.pos[0][1] < 10;
   for (var i = 1; i < this.pos.length; i++) {
     if (this.pos[0][0] === this.pos[i][0] && this.pos[0][1] === this.pos[i][1]) {
       valid = false;
@@ -181,10 +184,15 @@ $(document).keydown(function (event) {
     case 40:
       DIRECTION = 'DOWN';
       break;
+    case 82:
+      console.log('reset');
+      reset();
+      break;
     default:
+      event.preventDefault();
       return;
+
   }
-  event.preventDefault();
   console.log(DIRECTION);
   console.log(event.keyCode);
 });
@@ -194,15 +202,18 @@ $(document).keydown(function (event) {
 // //////////////////////////////////////////////
 // //////////////////////////////////////////////
 // //////////////////////////////////////////////
-var grid = new Grid();
-grid.draw();
 
-var movement = setInterval(function () {
-  var snake = grid.snake;
-  var apple = grid.apple;
+var GAMELOOP;
+var grid;
 
-  switch (DIRECTION) {
-    case 'LEFT':
+function gameLoop() {
+  var snake = new Snake();
+  grid = new Grid();
+  var GAMELOOP = setInterval(function () {
+    var snake = grid.snake;
+    var apple = grid.apple;
+    switch (DIRECTION) {
+      case 'LEFT':
       if (snake.dir === 'RIGHT') {
         snake.right(apple);
         break;
@@ -210,7 +221,7 @@ var movement = setInterval(function () {
       snake.left(apple);
       snake.dir = 'LEFT';
       break;
-    case 'RIGHT':
+      case 'RIGHT':
       if (snake.dir === 'LEFT') {
         snake.left(apple);
         break;
@@ -218,7 +229,7 @@ var movement = setInterval(function () {
       snake.dir = 'RIGHT';
       snake.right(apple);
       break;
-    case 'UP':
+      case 'UP':
       if (snake.dir === 'DOWN') {
         snake.down(apple);
         break;
@@ -226,7 +237,7 @@ var movement = setInterval(function () {
       snake.dir = 'UP';
       snake.up(apple);
       break;
-    case 'DOWN':
+      case 'DOWN':
       if (snake.dir === 'UP') {
         snake.up(apple);
         break;
@@ -234,16 +245,26 @@ var movement = setInterval(function () {
       snake.dir = 'DOWN';
       snake.down(apple);
       break;
-    default:
-  }
-  if (snake.checkValid()) {
-    grid.draw();
-    if (grid.isWon()) {
-      clearInterval(movement);
-      $('#gameover').append('U win!');
+      default:
     }
-  } else {
-    clearInterval(movement);
-    $('#gameover').append('Gameover!');
-  }
-}, 250);
+    if (snake.checkValid()) {
+      grid.draw();
+      if (grid.isWon()) {
+        clearInterval(GAMELOOP);
+        $gameover.html('U win!');
+      }
+    } else {
+      $gameover.html('Gameover!');
+      clearInterval(GAMELOOP);
+    }
+  }, 125);
+}
+
+function reset() {
+  clearInterval(GAMELOOP);
+  gameLoop();
+  $gameover.html('');
+  DIRECTION = 'DOWN';
+}
+
+gameLoop();
