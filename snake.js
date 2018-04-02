@@ -129,8 +129,8 @@ Apple.prototype.draw = function draw() {
 // //////////////////////////////////////////////
 // //////////////////////////////////////////////
 function Grid() {
-  this.width = 5;
-  this.height = 5;
+  this.width = 10;
+  this.height = 10;
   this.snake = new Snake(this);
   this.addApple();
 }
